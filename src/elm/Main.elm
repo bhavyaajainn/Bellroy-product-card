@@ -28,14 +28,14 @@ type alias Product =
     { name : String
     , subtitle : String
     , price : String
-    , imageUrl : String
-    , hoverImageUrl : String
     , colors : List ColorOption
     }
 
 type alias ColorOption =
     { name : String
     , hex : String
+    , imageUrl : String
+    , hoverImageUrl : String
     , selected : Bool
     }
 
@@ -45,17 +45,35 @@ init _ =
         { name = "Transit Workpack 20L"
         , subtitle = "Second Edition"
         , price = "$179"
-        , imageUrl = "https://bellroy.imgix.net/cms_images/7325/transit-workpack-20l-SE-amber-hero-1_1.jpg"
-        , hoverImageUrl = "https://bellroy.imgix.net/cms_images/7326/transit-workpack-20l-SE-amber-hero-2_1.jpg"
         , colors = 
-            [ { name = "Black", hex = "#333333", selected = False }
-            , { name = "Navy", hex = "#1a2b4a", selected = False }
-            , { name = "Ranger Green", hex = "#4A5D4E", selected = False }
-            , { name = "Amber", hex = "#bf6e3b", selected = True }
-            , { name = "Limestone", hex = "#d7d1c5", selected = False }
+            [ { name = "Bronze", 
+                hex = "#8B4513", 
+                imageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-BRZ-213/0?auto=format&fit=crop&w=1500&h=1500",
+                hoverImageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-BRZ-213/1?auto=format&fit=crop&w=1500&h=1500", 
+                selected = True }
+            , { name = "Black", 
+                hex = "#333333", 
+                imageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-BLK-215/0?auto=format&fit=crop&w=750&h=750",
+                hoverImageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-BLK-215/1?auto=format&fit=crop&w=750&h=750", 
+                selected = False }
+            , { name = "Navy", 
+                hex = "#1a2b4a", 
+                imageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-NSK-213/0?auto=format&fit=crop&w=750&h=750",
+                hoverImageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-NSK-213/1?auto=format&fit=crop&w=750&h=750", 
+                selected = False }
+            , { name = "Olive", 
+                hex = "#4A5D4E", 
+                imageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-OLI-215/0?auto=format&fit=crop&w=750&h=750",
+                hoverImageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-OLI-215/1?auto=format&fit=crop&w=750&h=750", 
+                selected = False }
+            , { name = "Stone", 
+                hex = "#d7d1c5", 
+                imageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-STO-215/0?auto=format&fit=crop&w=750&h=750",
+                hoverImageUrl = "https://bellroy-product-images.imgix.net/bellroy_dot_com_gallery_image/USD/BTWB-STO-215/1?auto=format&fit=crop&w=750&h=750", 
+                selected = False }
             ]
         }
-      , selectedColorIndex = 3  -- Amber is selected by default (index 3)
+      , selectedColorIndex = 0  -- Bronze is selected by default (index 0)
       , isHovering = False
       }
     , Cmd.none
@@ -96,7 +114,13 @@ view model =
                 |> List.indexedMap (\idx color -> if idx == model.selectedColorIndex then Just color else Nothing)
                 |> List.filterMap identity
                 |> List.head
-                |> Maybe.withDefault { name = "", hex = "", selected = False }
+                |> Maybe.withDefault { name = "", hex = "", imageUrl = "", hoverImageUrl = "", selected = False }
+                
+        currentImageUrl = 
+            if model.isHovering then
+                selectedColor.hoverImageUrl
+            else
+                selectedColor.imageUrl
     in
     div [ class "product-card" ]
         [ div 
@@ -105,7 +129,7 @@ view model =
             , onMouseLeave MouseLeave
             ]
             [ img 
-                [ src (if model.isHovering then model.product.hoverImageUrl else model.product.imageUrl)
+                [ src currentImageUrl
                 , class "product-image"
                 , alt model.product.name
                 ] 
