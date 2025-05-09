@@ -2,7 +2,7 @@
 // ElmProductCard.astro
 ---
 
-<div id="elm-app" class="w-full max-w-sm transition-all duration-300 hover:shadow-lg"></div>
+<div id="elm-app" class="w-full"></div>
 
 <script>
   import { Elm } from '../elm/Main.elm';
@@ -18,75 +18,95 @@
 <style>
   /* Base styles that will be applied to the Elm-generated HTML */
   :global(.product-card) {
-    @apply w-full rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300;
+    @apply w-full overflow-hidden border border-gray-100 shadow-md;
   }
 
   :global(.product-image-container) {
-    @apply relative w-full overflow-hidden pb-[100%] sm:pb-[90%];
+    @apply relative w-full overflow-hidden pb-[100%];
   }
 
   :global(.product-image) {
-    @apply absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500;
+    @apply absolute inset-0 w-full h-full object-contain object-center transition-all duration-300 bg-transparent;
   }
 
-  :global(.product-image-container:hover .product-image) {
-    @apply scale-105;
+  /* Toggle view button styles */
+  :global(.toggle-view-button-container) {
+    @apply absolute top-0 right-0 z-10 opacity-0 transition-opacity duration-200;
   }
 
+  :global(.product-image-container:hover .toggle-view-button-container) {
+    @apply opacity-100;
+  }
+
+  :global(.show-inside-button) {
+    @apply flex items-center justify-between bg-gray-200 text-gray-800 py-2 px-4 text-xs uppercase tracking-wider font-normal;
+  }
+
+  :global(.close-button) {
+    @apply flex items-center justify-between bg-gray-200 text-gray-800 py-2 px-4 text-xs uppercase tracking-wider font-normal;
+  }
+
+  :global(.button-icon) {
+    @apply ml-2 font-light text-lg leading-none;
+  }
+
+  /* Product info styles */
   :global(.product-info) {
-    @apply p-5;
+    @apply py-4;
   }
 
   :global(.product-title) {
-    @apply flex flex-col mb-2;
-  }
-
-  :global(.product-name) {
-    @apply font-medium text-xl text-gray-900 mb-0;
+    @apply text-base font-normal text-gray-800 mb-2;
   }
 
   :global(.product-subtitle) {
-    @apply text-gray-600 text-sm;
+    @apply font-normal text-gray-800;
   }
 
   :global(.product-price) {
-    @apply text-lg font-semibold text-gray-800 mb-4;
+    @apply text-base font-normal text-gray-800 mb-4;
   }
 
+  /* Color option styles */
   :global(.color-options) {
-    @apply flex flex-wrap gap-2 mb-4;
+    @apply flex space-x-4 mb-4;
   }
 
-  :global(.color-option-wrapper) {
-    @apply p-0.5 cursor-pointer;
+  :global(.color-option-container) {
+    @apply cursor-pointer relative flex items-center justify-center;
   }
 
   :global(.color-option) {
-    @apply w-6 h-6 rounded-full border-2 border-transparent transition-all duration-200;
+    @apply w-8 h-8 rounded-full border border-gray-200;
   }
 
+  /* Selected color style with same-color ring and padding */
   :global(.color-option.selected) {
-    @apply border-gray-800 scale-110;
+    @apply w-6 h-6 m-1 border-0;
   }
-
-  :global(.color-option-wrapper:hover .color-option) {
-    @apply scale-110;
+  
+  /* Color-specific rings */
+  :global(.color-option.selected[style*="background-color: #333333"]) {
+    @apply ring-2 ring-offset-2 ring-[#333333];
+  }
+  
+  :global(.color-option.selected[style*="background-color: #1a2b4a"]) {
+    @apply ring-2 ring-offset-2 ring-[#1a2b4a];
+  }
+  
+  :global(.color-option.selected[style*="background-color: #4A5D4E"]) {
+    @apply ring-2 ring-offset-2 ring-[#4A5D4E];
+  }
+  
+  :global(.color-option.selected[style*="background-color: #b36d3e"]) {
+    @apply ring-2 ring-offset-2 ring-[#b36d3e];
+  }
+  
+  :global(.color-option.selected[style*="background-color: #d7d1c5"]) {
+    @apply ring-2 ring-offset-2 ring-[#d7d1c5];
   }
 
   :global(.product-description) {
-    @apply text-sm text-gray-600;
-  }
-
-  /* Responsive adjustments */
-  @media (min-width: 640px) {
-    :global(.product-card) {
-      @apply flex flex-col;
-    }
-  }
-
-  @media (min-width: 768px) {
-    :global(.product-info) {
-      @apply p-6;
-    }
+    @apply text-sm text-gray-500 mb-2;
   }
 </style>
