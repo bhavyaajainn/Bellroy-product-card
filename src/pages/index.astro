@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ElmProductCard from '../components/ElmProductCard.astro';
+---
+
+<Layout title="Bellroy Product Card Demo">
+  <main>
+    <h1>Bellroy Product Card</h1>
+    <div class="card-container">
+      <ElmProductCard />
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    max-width: 1200px;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .card-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+</style>
