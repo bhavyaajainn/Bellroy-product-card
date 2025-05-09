@@ -8,7 +8,6 @@ import Json.Decode as Decode
 
 -- MAIN
 
-
 main =
     Browser.element
         { init = init
@@ -17,51 +16,57 @@ main =
         , view = view
         }
 
-
-
 -- MODEL
 
-
 type alias Model =
-    { productName : String
-    , price : String
-    , isHovering : Bool
+    { product : Product
     , selectedColorIndex : Int
-    , colors : List ColorOption
+    , isHovering : Bool
     }
 
+type alias Product =
+    { name : String
+    , subtitle : String
+    , price : String
+    , imageUrl : String
+    , hoverImageUrl : String
+    , colors : List ColorOption
+    }
 
 type alias ColorOption =
     { name : String
     , hex : String
+    , selected : Bool
     }
-
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { productName = "Bellroy Slim Wallet"
-      , price = "$89.00"
+    ( { product = 
+        { name = "Transit Workpack 20L"
+        , subtitle = "Second Edition"
+        , price = "$179"
+        , imageUrl = "https://bellroy.imgix.net/cms_images/7325/transit-workpack-20l-SE-amber-hero-1_1.jpg"
+        , hoverImageUrl = "https://bellroy.imgix.net/cms_images/7326/transit-workpack-20l-SE-amber-hero-2_1.jpg"
+        , colors = 
+            [ { name = "Black", hex = "#333333", selected = False }
+            , { name = "Navy", hex = "#1a2b4a", selected = False }
+            , { name = "Ranger Green", hex = "#4A5D4E", selected = False }
+            , { name = "Amber", hex = "#bf6e3b", selected = True }
+            , { name = "Limestone", hex = "#d7d1c5", selected = False }
+            ]
+        }
+      , selectedColorIndex = 3  -- Amber is selected by default (index 3)
       , isHovering = False
-      , selectedColorIndex = 0
-      , colors = 
-          [ { name = "Black", hex = "#000000" }
-          , { name = "Brown", hex = "#8B4513" }
-          , { name = "Navy", hex = "#000080" }
-          ]
       }
     , Cmd.none
     )
 
-
-
 -- UPDATE
-
 
 type Msg
     = MouseEnter
     | MouseLeave
     | SelectColor Int
-
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -75,55 +80,73 @@ update msg model =
         SelectColor index ->
             ( { model | selectedColorIndex = index }, Cmd.none )
 
-
-
 -- SUBSCRIPTIONS
-
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.none
 
-
-
 -- VIEW
-
 
 view : Model -> Html Msg
 view model =
+    let
+        selectedColor = 
+            model.product.colors
+                |> List.indexedMap (\idx color -> if idx == model.selectedColorIndex then Just color else Nothing)
+                |> List.filterMap identity
+                |> List.head
+                |> Maybe.withDefault { name = "", hex = "", selected = False }
+    in
     div [ class "product-card" ]
-        [ div [ class "product-image", 
-                onMouseEnter MouseEnter,
-                onMouseLeave MouseLeave
-              ]
-            [ img [ src (if model.isHovering 
-                          then "https://bellroy.imgix.net/cms_images/2753/hover-image-placeholder.jpg" 
-                          else "https://bellroy.imgix.net/cms_images/2752/image-placeholder.jpg"), 
-                   alt "Product Image" ] []
+        [ div 
+            [ class "product-image-container"
+            , onMouseEnter MouseEnter
+            , onMouseLeave MouseLeave
+            ]
+            [ img 
+                [ src (if model.isHovering then model.product.hoverImageUrl else model.product.imageUrl)
+                , class "product-image"
+                , alt model.product.name
+                ] 
+                []
             ]
         , div [ class "product-info" ]
-            [ h3 [ class "product-name" ] [ text model.productName ]
-            , p [ class "product-price" ] [ text model.price ]
-            , div [ class "color-options" ] (List.indexedMap (viewColorOption model.selectedColorIndex) model.colors)
+            [ div [ class "product-title" ]
+                [ h3 [ class "product-name" ] [ text model.product.name ]
+                , span [ class "product-subtitle" ] [ text model.product.subtitle ]
+                ]
+            , p [ class "product-price" ] [ text model.product.price ]
+            , div [ class "color-options" ] 
+                (List.indexedMap 
+                    (\idx color -> 
+                        viewColorOption idx color (idx == model.selectedColorIndex)
+                    ) 
+                    model.product.colors
+                )
+            , div [ class "product-description" ]
+                [ text "20L, 16\" laptop / A versatile backpack for work" ]
             ]
         ]
 
-
-viewColorOption : Int -> Int -> ColorOption -> Html Msg
-viewColorOption selectedIndex index color =
+viewColorOption : Int -> ColorOption -> Bool -> Html Msg
+viewColorOption index color isSelected =
     div 
-        [ class "color-option"
-        , classList [("selected", selectedIndex == index)]
+        [ class "color-option-wrapper"
         , onClick (SelectColor index)
-        , style "background-color" color.hex
-        , title color.name
-        ] []
-
+        ]
+        [ div 
+            [ class "color-option"
+            , classList [("selected", isSelected)]
+            , style "background-color" color.hex
+            , title color.name
+            ] 
+            []
+        ]
 
 onMouseEnter : msg -> Attribute msg
 onMouseEnter msg =
     Html.Events.on "mouseenter" (Decode.succeed msg)
-
 
 onMouseLeave : msg -> Attribute msg
 onMouseLeave msg =

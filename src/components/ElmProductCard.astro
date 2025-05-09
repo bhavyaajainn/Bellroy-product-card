@@ -2,7 +2,7 @@
 // ElmProductCard.astro
 ---
 
-<div id="elm-app"></div>
+<div id="elm-app" class="w-full max-w-sm transition-all duration-300 hover:shadow-lg"></div>
 
 <script>
   import { Elm } from '../elm/Main.elm';
@@ -16,74 +16,77 @@
 </script>
 
 <style>
-  /* Base styles for the container */
-  #elm-app {
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
+  /* Base styles that will be applied to the Elm-generated HTML */
+  :global(.product-card) {
+    @apply w-full rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300;
   }
 
-  /* These styles will apply to the Elm-generated HTML */
-  :global(.product-card) {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    background: white;
+  :global(.product-image-container) {
+    @apply relative w-full overflow-hidden pb-[100%] sm:pb-[90%];
   }
 
   :global(.product-image) {
-    width: 100%;
-    height: 0;
-    padding-bottom: 100%; /* Creates a square aspect ratio */
-    position: relative;
-    overflow: hidden;
+    @apply absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500;
   }
 
-  :global(.product-image img) {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+  :global(.product-image-container:hover .product-image) {
+    @apply scale-105;
   }
 
   :global(.product-info) {
-    padding: 16px;
+    @apply p-5;
+  }
+
+  :global(.product-title) {
+    @apply flex flex-col mb-2;
   }
 
   :global(.product-name) {
-    margin: 0 0 8px 0;
-    font-size: 18px;
-    font-weight: 500;
+    @apply font-medium text-xl text-gray-900 mb-0;
+  }
+
+  :global(.product-subtitle) {
+    @apply text-gray-600 text-sm;
   }
 
   :global(.product-price) {
-    margin: 0 0 12px 0;
-    font-size: 16px;
-    font-weight: 700;
-    color: #333;
+    @apply text-lg font-semibold text-gray-800 mb-4;
   }
 
   :global(.color-options) {
-    display: flex;
-    gap: 8px;
+    @apply flex flex-wrap gap-2 mb-4;
+  }
+
+  :global(.color-option-wrapper) {
+    @apply p-0.5 cursor-pointer;
   }
 
   :global(.color-option) {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    border: 2px solid transparent;
+    @apply w-6 h-6 rounded-full border-2 border-transparent transition-all duration-200;
   }
 
   :global(.color-option.selected) {
-    border-color: #000;
-    transform: scale(1.1);
+    @apply border-gray-800 scale-110;
   }
 
-  :global(.color-option:hover) {
-    transform: scale(1.15);
+  :global(.color-option-wrapper:hover .color-option) {
+    @apply scale-110;
+  }
+
+  :global(.product-description) {
+    @apply text-sm text-gray-600;
+  }
+
+  /* Responsive adjustments */
+  @media (min-width: 640px) {
+    :global(.product-card) {
+      @apply flex flex-col;
+    }
+  }
+
+  @media (min-width: 768px) {
+    :global(.product-info) {
+      @apply p-6;
+    }
   }
 </style>
